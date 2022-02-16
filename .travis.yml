@@ -1,0 +1,22 @@
+sudo : required
+services:
+  - docker
+
+before_install:
+  - docker build -t vivianqqy/react-test -f ./client/Dockerfile.dev .
+
+script:
+  - docker run -e CI=true USERNAME/react-test npm test
+
+after_success:
+  - docker build -t vivianqqy/multi-docker ./docker
+  - docker build -t vivianqqy/multi-nginx ./nginx
+  - docker build -t vivianqqy/multi-server ./server
+  - docker build -t vivianqqy/multi-worker ./worker
+  # log in to the docker CLI with echo docker variable in travis settings
+
+  # then publish to docker hub
+  - docker push vivianqqy/multi-docker
+  - docker push vivianqqy/multi-nginx
+  - docker push vivianqqy/multi-server
+  - docker push vivianqqy/multi-worker      
